@@ -18,6 +18,11 @@ app = Flask( __name__ )
 global scheme
 global selected_object
 
+
+def crete_directory_if_not_exists(directory):
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
 def export_functions(selected_scheme, host_pg, port_pg, db_name_pg, user_pg, password_pg, author_pg):
     conn = psycopg2.connect(
         host = host_pg,
@@ -37,8 +42,7 @@ def export_functions(selected_scheme, host_pg, port_pg, db_name_pg, user_pg, pas
 
     temp_folder = tempfile.mkdtemp()
 
-    if not os.path.exists( f"{temp_folder}" ):
-        os.makedirs( f"{temp_folder}" )
+    crete_directory_if_not_exists(temp_folder )
 
     with open( f"{temp_folder}/functions.xml", "w", encoding = 'utf-8' ) as xml_file:
         xml_file.write( "<?xml version='1.0' encoding='UTF-8'?>\n" )
@@ -80,8 +84,7 @@ def export_roles(selected_scheme, host_pg, port_pg, db_name_pg, user_pg, passwor
 
     temp_folder = tempfile.mkdtemp()
 
-    if not os.path.exists( f"{temp_folder}" ):
-        os.makedirs( f"{temp_folder}" )
+    crete_directory_if_not_exists(temp_folder )
 
     with open( f"{temp_folder}/roles.xml", "w", encoding = 'utf-8' ) as xml_file:
         xml_file.write( "<?xml version='1.0' encoding='UTF-8'?>\n" )
@@ -123,8 +126,7 @@ def export_grants(selected_scheme, host_pg, port_pg, db_name_pg, user_pg, passwo
 
     temp_folder = tempfile.mkdtemp()
 
-    if not os.path.exists( f"{temp_folder}" ):
-        os.makedirs( f"{temp_folder}" )
+    crete_directory_if_not_exists(temp_folder )
 
     with open( f"{temp_folder}/grants.xml", "w", encoding = 'utf-8' ) as xml_file:
         xml_file.write( "<?xml version='1.0' encoding='UTF-8'?>\n" )
@@ -245,8 +247,7 @@ def export_datatypes(selected_scheme, host_pg, port_pg, db_name_pg, user_pg, pas
 
     temp_folder = tempfile.mkdtemp()
 
-    if not os.path.exists( f"{temp_folder}" ):
-        os.makedirs( f"{temp_folder}" )
+    crete_directory_if_not_exists(temp_folder )
 
     for datatype in datatypes:
         with open( f"{temp_folder}/{datatype [1]}.sql", "w",
@@ -294,8 +295,7 @@ def export_procedures(selected_scheme, host_pg, port_pg, db_name_pg, user_pg, pa
 
     temp_folder = tempfile.mkdtemp()
 
-    if not os.path.exists( f"{temp_folder}" ):
-        os.makedirs( f"{temp_folder}" )
+    crete_directory_if_not_exists(temp_folder )
 
     with open( f"{temp_folder}/procedures.xml", "w", encoding = 'utf-8' ) as xml_file:
         xml_file.write( "<?xml version='1.0' encoding='UTF-8'?>\n" )
@@ -415,7 +415,7 @@ def export_tables(selected_scheme, host_pg, port_pg, db_name_pg, user_pg, passwo
                             sql_file.write( ";" )
                             sql_file.write( '\n' )
 
-    with open( f"{temp_folder_table}/tables.xml", "a", encoding = 'utf-8' ) as xml_file:
+    with open( f"{temp_folder_table}/tables.xml", "a", encoding = 'utf-8') as xml_file:
         xml_file.write( "</databaseChangeLog>\n" )
 
     return temp_folder_table
@@ -441,8 +441,7 @@ def export_constraints(selected_scheme, host_pg, port_pg, db_name_pg, user_pg, p
 
     temp_folder = tempfile.mkdtemp()
 
-    if not os.path.exists( f"{temp_folder}" ):
-        os.makedirs( f"{temp_folder}" )
+    crete_directory_if_not_exists(temp_folder )
 
     try:
         with open( f"{temp_folder}/constraints.xml", "w", encoding = 'utf-8' ) as xml_file:
@@ -473,6 +472,7 @@ def export_constraints(selected_scheme, host_pg, port_pg, db_name_pg, user_pg, p
         return
 
 
+
 def export_triggers(selected_scheme, host_pg, port_pg, db_name_pg, user_pg, password_pg, author_pg):
     conn = psycopg2.connect(
         host = host_pg,
@@ -492,8 +492,7 @@ def export_triggers(selected_scheme, host_pg, port_pg, db_name_pg, user_pg, pass
     if not triggers:
         return
 
-    if not os.path.exists( f"{temp_folder}" ):
-        os.makedirs( f"{temp_folder}" )
+    crete_directory_if_not_exists(temp_folder )
 
     with open( f"{temp_folder}/triggers.xml", "w", encoding = 'utf-8' ) as xml_file:
         xml_file.write( "<?xml version='1.0' encoding='UTF-8'?>\n" )
@@ -533,8 +532,7 @@ def export_matviews(selected_scheme, host_pg, port_pg, db_name_pg, user_pg, pass
 
     temp_folder = tempfile.mkdtemp()
 
-    if not os.path.exists( f"{temp_folder}" ):
-        os.makedirs( f"{temp_folder}" )
+    crete_directory_if_not_exists(temp_folder )
 
     with open( f"{temp_folder}/matviews.xml", "w", encoding = 'utf-8' ) as xml_file:
         xml_file.write( "<?xml version='1.0' encoding='UTF-8'?>\n" )
@@ -585,8 +583,7 @@ def export_views(selected_scheme, host_pg, port_pg, db_name_pg, user_pg, passwor
 
     temp_folder = tempfile.mkdtemp()
 
-    if not os.path.exists( f"{temp_folder}" ):
-        os.makedirs( f"{temp_folder}" )
+    crete_directory_if_not_exists(temp_folder )
 
     with open( f"{temp_folder}/views.xml", "w", encoding = 'utf-8' ) as xml_file:
         xml_file.write( "<?xml version='1.0' encoding='UTF-8'?>\n" )
@@ -615,6 +612,11 @@ def export_views(selected_scheme, host_pg, port_pg, db_name_pg, user_pg, passwor
                     f"CREATE OR REPLACE VIEW IF NOT EXISTS {selected_scheme}.{view_name} AS \n {view_query}" )
         xml_file.write( "</databaseChangeLog>\n" )
     return temp_folder
+
+
+@app.route( '/' )
+def index():
+    return render_template( 'index.html' )
 
 
 @app.route( '/export_pg', methods = ['POST'] )
@@ -651,79 +653,100 @@ def export():
 
     common_temp_folder = tempfile.mkdtemp()
 
+    install_xml_path = os.path.join( common_temp_folder, 'install.xml' )
+    with open( install_xml_path, "w", encoding = 'utf-8' ) as install_xml_file:
+        install_xml_file.write( "<?xml version='1.0' encoding='UTF-8'?>\n" )
+        install_xml_file.write( "<databaseChangeLog xmlns='http://www.liquibase.org/xml/ns/dbchangelog'\n" )
+        install_xml_file.write( "xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'\n" )
+        install_xml_file.write( "xsi:schemaLocation='http://www.liquibase.org/xml/ns/dbchangelog\n" )
+        install_xml_file.write( "http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd'>\n\n" )
+
     for schema_name in all_schemes:
+        schema_folder = os.path.join( common_temp_folder, schema_name [0] )
+        crete_directory_if_not_exists( schema_folder )
 
         if export_roles_check == 'on':
             roles_folder = export_roles( schema_name [0], host_pg, port_pg, db_name_pg, user_pg, password_pg,
                                          author_pg )
-
             if roles_folder:
-                shutil.copytree( roles_folder, os.path.join( common_temp_folder, schema_name [0], 'roles' ) )
+                shutil.copytree( roles_folder, os.path.join( schema_folder, 'roles' ) )
+                with open( install_xml_path, "a", encoding = 'utf-8' ) as install_xml_file:
+                    install_xml_file.write( f"\t<include file='{schema_name [0]}/roles/roles.xml'/>\n" )
 
         if export_grants_check == 'on':
             grants_folder = export_grants( schema_name [0], host_pg, port_pg, db_name_pg, user_pg, password_pg,
                                            author_pg )
-
             if grants_folder:
-                shutil.copytree( grants_folder, os.path.join( common_temp_folder, schema_name [0], 'grants' ) )
+                shutil.copytree( grants_folder, os.path.join( schema_folder, 'grants' ) )
+                with open( install_xml_path, "a", encoding = 'utf-8' ) as install_xml_file:
+                    install_xml_file.write( f"\t<include file='{schema_name [0]}/grants/grants.xml'/>\n" )
 
         if export_datatypes_check == 'on':
             datatypes_folder = export_datatypes( schema_name [0], host_pg, port_pg, db_name_pg, user_pg, password_pg,
                                                  author_pg )
-
             if datatypes_folder:
-                shutil.copytree( datatypes_folder, os.path.join( common_temp_folder, schema_name [0], 'datatypes' ) )
+                shutil.copytree( datatypes_folder, os.path.join( schema_folder, 'datatypes' ) )
+                with open( install_xml_path, "a", encoding = 'utf-8' ) as install_xml_file:
+                    install_xml_file.write( f"\t<include file='{schema_name [0]}/datatypes/datatypes.xml'/>\n" )
 
         if export_functions_check == 'on':
             functions_folder = export_functions( schema_name [0], host_pg, port_pg, db_name_pg, user_pg, password_pg,
                                                  author_pg )
-
             if functions_folder:
-                shutil.copytree( functions_folder, os.path.join( common_temp_folder, schema_name [0], 'functions' ) )
+                shutil.copytree( functions_folder, os.path.join( schema_folder, 'functions' ) )
+                with open( install_xml_path, "a", encoding = 'utf-8' ) as install_xml_file:
+                    install_xml_file.write( f"\t<include file='{schema_name [0]}/functions/functions.xml'/>\n" )
 
         if export_procedures_check == 'on':
             procedures_folder = export_procedures( schema_name [0], host_pg, port_pg, db_name_pg, user_pg, password_pg,
                                                    author_pg )
-
             if procedures_folder:
-                shutil.copytree( procedures_folder, os.path.join( common_temp_folder, schema_name [0], 'procedures' ) )
+                shutil.copytree( procedures_folder, os.path.join( schema_folder, 'procedures' ) )
+                with open( install_xml_path, "a", encoding = 'utf-8' ) as install_xml_file:
+                    install_xml_file.write( f"\t<include file='{schema_name [0]}/procedures/procedures.xml'/>\n" )
 
         if export_tables_check == 'on':
             tables_folder = export_tables( schema_name [0], host_pg, port_pg, db_name_pg, user_pg, password_pg,
                                            author_pg )
-
             if tables_folder:
-                shutil.copytree( tables_folder, os.path.join( common_temp_folder, schema_name [0], 'tables' ) )
+                shutil.copytree( tables_folder, os.path.join( schema_folder, 'tables' ) )
+                with open( install_xml_path, "a", encoding = 'utf-8' ) as install_xml_file:
+                    install_xml_file.write( f"\t<include file='{schema_name [0]}/tables/tables.xml'/>\n" )
 
         if export_constraints_check == 'on':
             constraints_folder = export_constraints( schema_name [0], host_pg, port_pg, db_name_pg, user_pg,
-                                                     password_pg,
-                                                     author_pg )
-
+                                                     password_pg, author_pg )
             if constraints_folder:
-                shutil.copytree( constraints_folder,
-                                 os.path.join( common_temp_folder, schema_name [0], 'constraints' ) )
+                shutil.copytree( constraints_folder, os.path.join( schema_folder, 'constraints' ) )
+                with open( install_xml_path, "a", encoding = 'utf-8' ) as install_xml_file:
+                    install_xml_file.write( f"\t<include file='{schema_name [0]}/constraints/constraints.xml'/>\n" )
 
         if export_triggers_check == 'on':
             triggers_folder = export_triggers( schema_name [0], host_pg, port_pg, db_name_pg, user_pg, password_pg,
                                                author_pg )
-
             if triggers_folder:
-                shutil.copytree( triggers_folder, os.path.join( common_temp_folder, schema_name [0], 'triggers' ) )
+                shutil.copytree( triggers_folder, os.path.join( schema_folder, 'triggers' ) )
+                with open( install_xml_path, "a", encoding = 'utf-8' ) as install_xml_file:
+                    install_xml_file.write( f"\t<include file='{schema_name [0]}/triggers/triggers.xml'/>\n" )
 
         if export_matviews_check == 'on':
-            mapviews__folder = export_matviews( schema_name [0], host_pg, port_pg, db_name_pg, user_pg, password_pg,
-                                                author_pg )
-
-            if mapviews__folder:
-                shutil.copytree( mapviews__folder, os.path.join( common_temp_folder, schema_name [0], 'matviews' ) )
+            matviews_folder = export_matviews( schema_name [0], host_pg, port_pg, db_name_pg, user_pg, password_pg,
+                                               author_pg )
+            if matviews_folder:
+                shutil.copytree( matviews_folder, os.path.join( schema_folder, 'matviews' ) )
+                with open( install_xml_path, "a", encoding = 'utf-8' ) as install_xml_file:
+                    install_xml_file.write( f"\t<include file='{schema_name [0]}/matviews/matviews.xml'/>\n" )
 
         if export_views_check == 'on':
-            views__folder = export_views( schema_name [0], host_pg, port_pg, db_name_pg, user_pg, password_pg,
-                                          author_pg )
+            views_folder = export_views( schema_name [0], host_pg, port_pg, db_name_pg, user_pg, password_pg,
+                                         author_pg )
+            if views_folder:
+                shutil.copytree( views_folder, os.path.join( schema_folder, 'views' ) )
+                with open( install_xml_path, "a", encoding = 'utf-8' ) as install_xml_file:
+                    install_xml_file.write( f"\t<include file='{schema_name [0]}/views/views.xml'/>\n" )
 
-            if views__folder:
-                shutil.copytree( views__folder, os.path.join( common_temp_folder, schema_name [0], 'views' ) )
+    with open( install_xml_path, "a", encoding = 'utf-8' ) as install_xml_file:
+        install_xml_file.write( "\n</databaseChangeLog>\n" )
 
     combined_zip_path = os.path.join( tempfile.gettempdir(), f"{db_name_pg}.zip" )
     with zipfile.ZipFile( combined_zip_path, 'w', zipfile.ZIP_DEFLATED ) as combined_zip:
@@ -737,28 +760,6 @@ def export():
 
     return send_file( combined_zip_path, as_attachment = True )
 
-bot = Bot(token = '6340566300:AAFNjspqqsxY5cmO8pTS1FRkNKMWhrKR34s')
-dp = Dispatcher()
-
-@dp.message(Command('start'))
-async def start(message: types.Message, state: FSMContext):
-    async with aiohttp.ClientSession() as session:
-        async with session.get('https://127.0.0.1:5000', ssl=False) as response:
-            url = str(response.url)
-            item1 = KeyboardButton(text="Выгрузить пг", web_app=WebAppInfo(url=url))
-            keyboard = ReplyKeyboardMarkup(keyboard=[[item1]])
-            await bot.send_message(message.from_user.id, 'Привет', reply_markup=keyboard, parse_mode="Markdown")
-
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-def run_flask():
-    app.run(host='0.0.0.0', port=5000, ssl_context='adhoc')
-
-async def main():
-    threading.Thread(target=run_flask).start()
-    await dp.start_polling(bot)
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    app.run( host = '0.0.0.0', port = 80, debug = True )
